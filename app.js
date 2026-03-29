@@ -5,8 +5,7 @@ const categoryTag = document.getElementById('category-tag');
 const answerText = document.getElementById('answer-text');
 const answerCard = document.getElementById('answer-card');
 const resultCard = document.getElementById('result-card');
-const actionArea = document.getElementById('action-area');
-const showAnswerBtn = document.getElementById('show-answer-btn');
+const optionsContainer = document.getElementById('options-container');
 const nextBtn = document.getElementById('next-btn');
 const progressText = document.getElementById('progress-text');
 const progressFill = document.getElementById('progress-fill');
@@ -26,9 +25,22 @@ function loadQuestion() {
     questionText.innerText = q.question;
     categoryTag.innerText = q.category;
     
+    // 選択肢の生成
+    optionsContainer.innerHTML = '';
+    optionsContainer.classList.remove('hidden');
+    
+    if (q.options) {
+        q.options.forEach((optionText, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = optionText;
+            btn.onclick = () => selectOption(index);
+            optionsContainer.appendChild(btn);
+        });
+    }
+    
     // UIのリセット
     answerCard.classList.add('hidden');
-    actionArea.classList.remove('hidden');
     
     // スクロールを一番上に戻す(スマホ用に便利)
     window.scrollTo(0, 0);
@@ -36,12 +48,28 @@ function loadQuestion() {
     updateProgress();
 }
 
-function showAnswer() {
+function selectOption(selectedIndex) {
     const q = questions[currentIndex];
-    answerText.innerText = q.answer;
+    const isCorrect = selectedIndex === q.answerIndex;
+    const buttons = optionsContainer.querySelectorAll('.option-btn');
+    
+    buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        if (idx === q.answerIndex) {
+            btn.classList.add('correct');
+        } else if (idx === selectedIndex && !isCorrect) {
+            btn.classList.add('incorrect');
+        }
+    });
+    
+    // 答えのテキストに正解・不正解のラベルも追加して表示
+    if (isCorrect) {
+        answerText.innerHTML = `<span style="color: #4ade80; font-weight: bold; font-size: 1.2rem;">⭕ 大正解！</span>\n\n` + q.answer;
+    } else {
+        answerText.innerHTML = `<span style="color: #f87171; font-weight: bold; font-size: 1.2rem;">❌ 残念...正解は「${q.options[q.answerIndex]}」でした。</span>\n\n` + q.answer;
+    }
     
     answerCard.classList.remove('hidden');
-    actionArea.classList.add('hidden');
     
     // 答えのカードが見えるように少し下へスクロール
     setTimeout(() => {
@@ -52,14 +80,13 @@ function showAnswer() {
 function showResult() {
     document.querySelector('.question-card').classList.add('hidden');
     answerCard.classList.add('hidden');
-    actionArea.classList.add('hidden');
+    if(optionsContainer) optionsContainer.classList.add('hidden');
     resultCard.classList.remove('hidden');
     
     progressText.innerText = `完了!`;
     progressFill.style.width = `100%`;
 }
 
-showAnswerBtn.addEventListener('click', showAnswer);
 nextBtn.addEventListener('click', () => {
     currentIndex++;
     loadQuestion();
