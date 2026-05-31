@@ -10,6 +10,10 @@ const nextBtn = document.getElementById('next-btn');
 const progressText = document.getElementById('progress-text');
 const progressFill = document.getElementById('progress-fill');
 
+const answerDetailContainer = document.getElementById('answer-detail-container');
+const answerMoreBtn = document.getElementById('answer-more-btn');
+const answerDetailedExplanation = document.getElementById('answer-detailed-explanation');
+
 function updateProgress() {
     progressText.innerText = `${currentIndex + 1} / ${questions.length}`;
     const percentage = ((currentIndex + 1) / questions.length) * 100;
@@ -41,6 +45,12 @@ function loadQuestion() {
     
     // UIのリセット
     answerCard.classList.add('hidden');
+    if (answerDetailContainer) {
+        answerDetailContainer.classList.add('hidden');
+        answerDetailedExplanation.classList.add('hidden');
+        answerMoreBtn.innerHTML = 'もっと詳しく <span>▾</span>';
+        answerMoreBtn.classList.remove('active');
+    }
     
     // スクロールを一番上に戻す(スマホ用に便利)
     window.scrollTo(0, 0);
@@ -70,6 +80,30 @@ function selectOption(selectedIndex) {
     }
     
     answerCard.classList.remove('hidden');
+    
+    // もっと詳しくボタンの表示制御
+    if (q.detailedExplanation) {
+        answerDetailedExplanation.innerHTML = q.detailedExplanation;
+        answerDetailContainer.classList.remove('hidden');
+        
+        answerMoreBtn.onclick = () => {
+            const isHidden = answerDetailedExplanation.classList.contains('hidden');
+            if (isHidden) {
+                answerDetailedExplanation.classList.remove('hidden');
+                answerMoreBtn.innerHTML = '閉じる <span>▴</span>';
+                answerMoreBtn.classList.add('active');
+                setTimeout(() => {
+                    answerDetailedExplanation.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 100);
+            } else {
+                answerDetailedExplanation.classList.add('hidden');
+                answerMoreBtn.innerHTML = 'もっと詳しく <span>▾</span>';
+                answerMoreBtn.classList.remove('active');
+            }
+        };
+    } else {
+        answerDetailContainer.classList.add('hidden');
+    }
     
     // 答えのカードが見えるように少し下へスクロール
     setTimeout(() => {
@@ -108,10 +142,35 @@ reviewBtn.addEventListener('click', () => {
         html += `<div class="review-item">
             <div class="review-q"><span class="review-number">Q${idx + 1}.</span> ${q.question}</div>
             <div class="review-a">${q.answer}</div>
+            ${q.detailedExplanation ? `
+                <div class="detail-container">
+                    <button class="more-btn" onclick="toggleDetail(${idx})">もっと詳しく <span>▾</span></button>
+                    <div id="detail-${idx}" class="detailed-explanation hidden">
+                        ${q.detailedExplanation}
+                    </div>
+                </div>
+            ` : ''}
         </div>`;
     });
     reviewContent.innerHTML = html;
 });
+
+// 詳細解説の開閉制御
+window.toggleDetail = function(index) {
+    const detailDiv = document.getElementById(`detail-${index}`);
+    const btn = detailDiv.previousElementSibling;
+    const isHidden = detailDiv.classList.contains('hidden');
+    
+    if (isHidden) {
+        detailDiv.classList.remove('hidden');
+        btn.innerHTML = '閉じる <span>▴</span>';
+        btn.classList.add('active');
+    } else {
+        detailDiv.classList.add('hidden');
+        btn.innerHTML = 'もっと詳しく <span>▾</span>';
+        btn.classList.remove('active');
+    }
+};
 
 // アプリの起動時に最初の問題を読み込む
 loadQuestion();

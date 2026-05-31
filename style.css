@@ -265,3 +265,67 @@ h1 {
     padding: 16px;
     border-radius: 12px;
 }
+
+/* もっと詳しくボタンと詳細解説のアコーディオンUI */
+.detail-container {
+    margin-top: 16px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.15);
+    padding-top: 16px;
+}
+
+.more-btn {
+    background: transparent;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #38bdf8;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 auto;
+    transition: all 0.2s ease;
+}
+
+.more-btn span {
+    font-size: 0.75rem;
+    transition: transform 0.2s ease;
+}
+
+.more-btn:hover {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: #38bdf8;
+}
+
+.more-btn.active {
+    background: rgba(56, 189, 248, 0.1);
+    color: #f8fafc;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.detailed-explanation {
+    margin-top: 12px;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 12px;
+    border-left: 4px solid #38bdf8;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    line-height: 1.6;
+    text-align: left;
+    white-space: pre-line;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
