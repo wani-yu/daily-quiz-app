@@ -10,9 +10,7 @@ const nextBtn = document.getElementById('next-btn');
 const progressText = document.getElementById('progress-text');
 const progressFill = document.getElementById('progress-fill');
 
-const answerDetailContainer = document.getElementById('answer-detail-container');
-const answerMoreBtn = document.getElementById('answer-more-btn');
-const answerDetailedExplanation = document.getElementById('answer-detailed-explanation');
+
 
 function updateProgress() {
     progressText.innerText = `${currentIndex + 1} / ${questions.length}`;
@@ -45,12 +43,7 @@ function loadQuestion() {
     
     // UIのリセット
     answerCard.classList.add('hidden');
-    if (answerDetailContainer) {
-        answerDetailContainer.classList.add('hidden');
-        answerDetailedExplanation.classList.add('hidden');
-        answerMoreBtn.innerHTML = 'もっと詳しく <span>▾</span>';
-        answerMoreBtn.classList.remove('active');
-    }
+
     
     // スクロールを一番上に戻す(スマホ用に便利)
     window.scrollTo(0, 0);
@@ -81,29 +74,7 @@ function selectOption(selectedIndex) {
     
     answerCard.classList.remove('hidden');
     
-    // もっと詳しくボタンの表示制御
-    if (q.detailedExplanation) {
-        answerDetailedExplanation.innerHTML = q.detailedExplanation;
-        answerDetailContainer.classList.remove('hidden');
-        
-        answerMoreBtn.onclick = () => {
-            const isHidden = answerDetailedExplanation.classList.contains('hidden');
-            if (isHidden) {
-                answerDetailedExplanation.classList.remove('hidden');
-                answerMoreBtn.innerHTML = '閉じる <span>▴</span>';
-                answerMoreBtn.classList.add('active');
-                setTimeout(() => {
-                    answerDetailedExplanation.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                }, 100);
-            } else {
-                answerDetailedExplanation.classList.add('hidden');
-                answerMoreBtn.innerHTML = 'もっと詳しく <span>▾</span>';
-                answerMoreBtn.classList.remove('active');
-            }
-        };
-    } else {
-        answerDetailContainer.classList.add('hidden');
-    }
+
     
     // 答えのカードが見えるように少し下へスクロール
     setTimeout(() => {
